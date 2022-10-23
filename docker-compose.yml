@@ -1,4 +1,4 @@
-version: '1'
+version: '3'
 services:
   app:
     build:
@@ -24,12 +24,14 @@ services:
       context: .
       dockerfile: docker/mysql/Dockerfile
     ports:
-      - "3306:3306"
+      - "33061:3306"
+    restart: always
+    tty: true
     environment:
-      MYSQL_USER: root
-      MYSQL_PASSWORD: root
-      MYSQL_ROOT_PASSWORD: root
-    # sync folders. MySQL data is stored outside container so that rebuilding doesn't clear db.
-    # folder is at workspace root.
+      MYSQL_DATABASE: cmc
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+      MYSQL_ROOT_USER: root
+      MYSQL_ROOT_PASSWORD: password
     volumes:
-      - ./docker/mysql/dbdata:/var/lib/mysql
+      - ./docker/mysql/dbdata/:/var/lib/mysql

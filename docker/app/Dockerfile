@@ -17,9 +17,9 @@ RUN apt-get update -y && \
 
 # install package
 RUN go mod tidy
-Copy the entrypoint file
+# Copy the entrypoint file
 ADD /docker/app/infinite_loop.sh /infinite_loop.sh
 RUN chmod +x /infinite_loop.sh
 
-Start process
+#Start process
 ENTRYPOINT ["/infinite_loop.sh"]
