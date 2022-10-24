@@ -12,7 +12,7 @@ import (
 	userstorage "cmc/module/users/storage"
 )
 
-func HanleCreateItem(db *gorm.DB) gin.HandlerFunc {
+func HanleCreateUser(db *gorm.DB) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var dataItem usermodel.User
 
