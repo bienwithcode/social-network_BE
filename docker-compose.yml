@@ -1,6 +1,7 @@
 version: '3'
 services:
   app:
+    container_name: appcontainer
     build:
       context: .
       dockerfile: docker/app/Dockerfile
@@ -13,13 +14,14 @@ services:
     env_file:
       - docker/app/.env
     working_dir: /var/www/src  
-    # Link to containers in another service
-    links:
-      - mysql
     # sync workspace folder with /go
     volumes:
      - ./src/:/var/www/src
+    # Link to containers in another service
+    depends_on:
+      - mysql
   mysql:
+    container_name: mysqlcontainer
     build:
       context: .
       dockerfile: docker/mysql/Dockerfile
