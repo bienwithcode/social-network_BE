@@ -1,0 +1,3 @@
+*.env
+docker/mysql/dbdata
+docker/mysql/dbdata/**
