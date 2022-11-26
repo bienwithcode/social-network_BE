@@ -28,7 +28,6 @@ services:
     ports:
       - "33061:3306"
     restart: always
-    tty: true
     environment:
       MYSQL_DATABASE: cmc
       MYSQL_USER: user

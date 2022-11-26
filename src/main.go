@@ -1,7 +1,7 @@
 package main
 
 import (
-	usertrpt "cmc/module/users/transport"
+	usertrpt "cmc/module/users/delivery"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"gorm.io/driver/mysql"
@@ -9,13 +9,11 @@ import (
 )
 
 func main() {
-	fmt.Println("test")
 	dsn := "root:password@tcp(mysqlcontainer)/cmc?charset=utf8mb4&parseTime=True&loc=Local"
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
-		fmt.Println("err")
+		fmt.Println(err.Error())
 	}
-	fmt.Println(&db)
 
 	router := gin.Default()
 

@@ -3,5 +3,5 @@ go run main.go &
 while true
 do
 	echo "Looping forever..."
-	sleep 1
+	sleep 10000
 done
