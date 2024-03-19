@@ -17,22 +17,3 @@ services:
     # sync workspace folder with /go
     volumes:
      - ./src/:/var/www/src
-    # Link to containers in another service
-    depends_on:
-      - mysql
-  mysql:
-    container_name: mysqlcontainer
-    build:
-      context: .
-      dockerfile: docker/mysql/Dockerfile
-    ports:
-      - "33061:3306"
-    restart: always
-    environment:
-      MYSQL_DATABASE: cmc
-      MYSQL_USER: user
-      MYSQL_PASSWORD: password
-      MYSQL_ROOT_USER: root
-      MYSQL_ROOT_PASSWORD: password
-    volumes:
-      - ./docker/mysql/dbdata/:/var/lib/mysql
