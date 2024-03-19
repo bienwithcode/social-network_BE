@@ -8,6 +8,6 @@ type mongodbStorage struct {
 	db *mongo.Database
 }
 
-func NewMySQLStorage(db *mongo.Database) *mongodbStorage {
+func NewMongoStorage(db *mongo.Database) *mongodbStorage {
 	return &mongodbStorage{db: db}
 }

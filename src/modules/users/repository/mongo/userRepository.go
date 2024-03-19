@@ -2,7 +2,7 @@ package rMongo
 
 import (
 	"context"
-	"social-network/module/users/model"
+	"social-network/domain"
 
 	"go.mongodb.org/mongo-driver/bson"
 )
@@ -16,10 +16,10 @@ import (
 // 	Delete(ctx context.Context, id int64) error
 // }
 
-func (storage *mongodbStorage) GetAuth(ctx context.Context, email, password string) (*model.User, error) {
+func (storage *mongodbStorage) GetAuth(ctx context.Context, email, password string) (*domain.User, error) {
 
-	var user model.User
-	collection := storage.db.Collection(model.User{}.TableName())
+	var user domain.User
+	collection := storage.db.Collection(domain.User{}.TableName())
 	filter := bson.M{"email": email, "password": password}
 
 	if err := collection.FindOne(context.TODO(), filter).Decode(&user); err != nil {

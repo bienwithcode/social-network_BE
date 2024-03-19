@@ -2,7 +2,8 @@ package business
 
 import (
 	"context"
-	"social-network/module/auth/model"
+	"social-network/domain"
+	"social-network/modules/auth/model"
 	"social-network/utils"
 	"time"
 )
@@ -11,7 +12,7 @@ type AuthRepository interface {
 }
 
 type UserRepository interface {
-	GetAuth(ctx context.Context, email, password string) (*model.Auth, error)
+	GetAuth(ctx context.Context, email, password string) (*domain.User, error)
 }
 
 type business struct {
@@ -33,7 +34,7 @@ func (biz *business) Login(ctx context.Context, data *model.AuthEmailPassword) (
 	}
 
 	claimsData := make(map[string]interface{})
-	claimsData["user"] = &authData
+	claimsData["auth"] = &authData
 
 	expiredAt := time.Hour * 24
 

@@ -3,7 +3,7 @@ package api
 import (
 	"context"
 	"net/http"
-	"social-network/module/auth/model"
+	"social-network/modules/auth/model"
 	"social-network/utils"
 
 	"github.com/gin-gonic/gin"

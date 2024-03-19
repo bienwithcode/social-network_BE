@@ -4,6 +4,9 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	authBsn "social-network/modules/auth/business"
+	authHdl "social-network/modules/auth/delivery/api"
+	authRepo "social-network/modules/users/repository/mongo"
 
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -25,14 +28,17 @@ func main() {
 		}
 	}()
 
-	collection := client.Database("social-network").Collection("users")
+	db := client.Database("social-network")
 
-	fmt.Printf("%#v\n", collection)
+	// auth dependencies
+	authRepository := authRepo.NewMongoStorage(db)
+	authBusiness := authBsn.NewBusiness(authRepository)
+	authApi := authHdl.NewAPI(authBusiness)
+
 	router := gin.Default()
-
 	v1 := router.Group("/v1")
 	{
-		//v1.POST("/user", usertrpt.HanleCreateUser(db)) // updated
+		v1.POST("/login", authApi.LoginHdl()) // updated
 		//...
 		v1.GET("/ping", func(c *gin.Context) {
 			c.JSON(http.StatusOK, gin.H{
