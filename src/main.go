@@ -3,14 +3,22 @@ package main
 import (
 	"context"
 	"fmt"
+	"net"
 	"net/http"
 	authBsn "social-network/modules/auth/business"
 	authHdl "social-network/modules/auth/delivery/api"
-	authRepo "social-network/modules/users/repository/mongo"
+	authRpc "social-network/modules/auth/repository/rpc"
+
+	userBsn "social-network/modules/user/business"
+	userHdl "social-network/modules/user/delivery/rpc"
+	userRepo "social-network/modules/user/repository/mongo"
+	pb "social-network/proto/pb"
 
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 )
 
 func main() {
@@ -30,10 +38,43 @@ func main() {
 
 	db := client.Database("social-network")
 
+	// auth grpc client
+	authGrpcClientConn, err := grpc.Dial("localhost:50051", grpc.WithTransportCredentials(insecure.NewCredentials()))
+	if err != nil {
+		fmt.Println("authGrpcClientConn err!")
+		panic(err)
+	}
+	defer authGrpcClientConn.Close()
+
+	// user grpc server
+	listen, err := net.Listen("tcp", ":50051")
+	if err != nil {
+		fmt.Println("userGrpcServerListen err!")
+		panic(err)
+	}
+	// Tạo một gRPC server
+	type userServiceServer struct{}
+	server := grpc.NewServer()
+
 	// auth dependencies
-	authRepository := authRepo.NewMongoStorage(db)
-	authBusiness := authBsn.NewBusiness(authRepository)
+	authGrpcClient := pb.NewUserServiceClient(authGrpcClientConn)
+	authRepo := authRpc.NewGrpcServiceClient(authGrpcClient)
+	authBusiness := authBsn.NewBusiness(authRepo)
 	authApi := authHdl.NewAPI(authBusiness)
+
+	// user dependencies
+	UserRepository := userRepo.NewMongoStorage(db)
+	userBusiness := userBsn.NewBusiness(UserRepository)
+	userRpc := userHdl.NewGrpcService(userBusiness)
+	pb.RegisterUserServiceServer(server, userRpc)
+
+	go func() {
+		// Start the gRPC server
+		if err := server.Serve(listen); err != nil {
+			fmt.Println("fail to serve err!")
+			panic(err)
+		}
+	}()
 
 	router := gin.Default()
 	v1 := router.Group("/v1")

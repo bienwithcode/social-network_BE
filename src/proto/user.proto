@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+option go_package = "./pb";
+
+package user;
+
+import "google/protobuf/timestamp.proto";
+
+message GetAuthRequest {
+  string email = 1;
+  string password = 2;
+}
+
+message User {
+  string id = 1;
+  string username = 2;
+  string email = 3;
+  string role = 4;
+  bool email_verified = 5;
+  google.protobuf.Timestamp created_at = 6;
+  google.protobuf.Timestamp updated_at = 7;
+}
+
+message GetAuthResponse {
+  User user = 1;
+}
+
+service UserService {
+  rpc GetAuth(GetAuthRequest) returns (GetAuthResponse);
+}

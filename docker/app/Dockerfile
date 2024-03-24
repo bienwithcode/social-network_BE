@@ -8,7 +8,8 @@ WORKDIR /var/www/src
 COPY ./src /var/www/src
 
 RUN apt-get update -y && \
-	apt-get install -y \
+	apt-get install -y && \
+	apt install -y protobuf-compiler \
 	vim
 
 # Install and build binaries revel for this server
