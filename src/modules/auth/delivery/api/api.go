@@ -28,12 +28,14 @@ func (api *api) LoginHdl() func(*gin.Context) {
 
 		if err := c.ShouldBind(&data); err != nil {
 			utils.WriteErrorResponse(c, http.StatusBadRequest, err)
+			return
 		}
 
 		response, err := api.business.Login(c.Request.Context(), &data)
 
 		if err != nil {
 			utils.WriteErrorResponse(c, http.StatusBadRequest, err)
+			return
 		}
 		utils.WriteSuccessResponse(c, "success", http.StatusOK, &response)
 	}

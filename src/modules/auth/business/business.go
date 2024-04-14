@@ -12,7 +12,7 @@ type AuthRepository interface {
 }
 
 type UserRepository interface {
-	GetAuth(ctx context.Context, email, password string) (*domain.User, error)
+	GetAuthorize(ctx context.Context, email, password string) (*domain.User, error)
 }
 
 type business struct {
@@ -27,7 +27,7 @@ func NewBusiness(userRepo UserRepository) *business {
 
 func (biz *business) Login(ctx context.Context, data *model.AuthEmailPassword) (*model.TokenResponse, error) {
 
-	authData, err := biz.userRepo.GetAuth(ctx, data.Email, data.Password)
+	authData, err := biz.userRepo.GetAuthorize(ctx, data.Email, data.Password)
 
 	if err != nil {
 		return nil, err
