@@ -4,9 +4,8 @@ import (
 	"context"
 	"social-network/domain"
 
-	"golang.org/x/crypto/bcrypt"
-
 	"go.mongodb.org/mongo-driver/bson"
+	"golang.org/x/crypto/bcrypt"
 )
 
 // type UserRepository interface {
@@ -18,17 +17,34 @@ import (
 // 	Delete(ctx context.Context, id int64) error
 // }
 
+// func (storage *mongodbStorage) GetAuth(ctx context.Context, email, password string) (*domain.User, error) {
+
+// 	var user domain.User
+// 	hash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+// 	if err != nil {
+// 		panic(err)
+// 	}
+// 	collection := storage.db.Collection(domain.User{}.TableName())
+// 	filter := bson.M{"email": email, "password": hash}
+
+// 	if err := collection.FindOne(context.TODO(), filter).Decode(&user); err != nil {
+// 		return nil, err
+// 	}
+
+// 	return &user, nil
+// }
+
 func (storage *mongodbStorage) GetAuth(ctx context.Context, email, password string) (*domain.User, error) {
 
 	var user domain.User
-	hash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
-	if err != nil {
-		panic(err)
-	}
 	collection := storage.db.Collection(domain.User{}.TableName())
-	filter := bson.M{"email": email, "password": hash}
+	filter := bson.M{"email": email}
 
 	if err := collection.FindOne(context.TODO(), filter).Decode(&user); err != nil {
+		return nil, err
+	}
+
+	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password)); err != nil {
 		return nil, err
 	}
 

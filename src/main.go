@@ -27,12 +27,13 @@ func main() {
 	// Create a new client and connect to the server
 	client, err := mongo.Connect(context.TODO(), opts)
 	if err != nil {
-		fmt.Println("DB err!")
-		panic(err)
+		fmt.Println(err.Error())
+		return
 	}
 	defer func() {
 		if err = client.Disconnect(context.TODO()); err != nil {
-			panic(err)
+			fmt.Println(err.Error())
+			return
 		}
 	}()
 
@@ -41,16 +42,16 @@ func main() {
 	// auth grpc client
 	authGrpcClientConn, err := grpc.Dial("localhost:50051", grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
-		fmt.Println("authGrpcClientConn err!")
-		panic(err)
+		fmt.Println(err.Error())
+		return
 	}
 	defer authGrpcClientConn.Close()
 
 	// user grpc server
 	listen, err := net.Listen("tcp", ":50051")
 	if err != nil {
-		fmt.Println("userGrpcServerListen err!")
-		panic(err)
+		fmt.Println(err.Error())
+		return
 	}
 	// Tạo một gRPC server
 	type userServiceServer struct{}
@@ -71,8 +72,8 @@ func main() {
 	go func() {
 		// Start the gRPC server
 		if err := server.Serve(listen); err != nil {
-			fmt.Println("fail to serve err!")
-			panic(err)
+			fmt.Println(err.Error())
+			return
 		}
 	}()
 

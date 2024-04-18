@@ -27,14 +27,14 @@ func (api *api) LoginHdl() func(*gin.Context) {
 		var data model.AuthEmailPassword
 
 		if err := c.ShouldBind(&data); err != nil {
-			utils.WriteErrorResponse(c, http.StatusBadRequest, err)
+			utils.WriteErrorResponse(c, http.StatusBadRequest, err.Error())
 			return
 		}
 
 		response, err := api.business.Login(c.Request.Context(), &data)
 
 		if err != nil {
-			utils.WriteErrorResponse(c, http.StatusBadRequest, err)
+			utils.WriteErrorResponse(c, http.StatusBadRequest, err.Error())
 			return
 		}
 		utils.WriteSuccessResponse(c, "success", http.StatusOK, &response)

@@ -7,6 +7,7 @@ type User struct {
 	Username      string     `json:"username" bson:"username"`
 	Email         string     `json:"email" bson:"email"`
 	Role          string     `json:"role" bson:"role"`
+	Password      string     `json:"password" bson:"password"`
 	EmailVerified bool       `json:"email_verified" bson:"emailVerified"`
 	CreatedAt     *time.Time `json:"created_at" bson:"createdAt"`
 	UpdatedAt     *time.Time `json:"updated_at" bson:"updatedAt"`
