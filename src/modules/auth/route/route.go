@@ -25,7 +25,7 @@ func initAuthGrpcService(addr string) AuthService {
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer authGrpcClientConn.Close()
+	// defer authGrpcClientConn.Close()
 
 	// auth dependencies
 	authGrpcClient := pb.NewUserServiceClient(authGrpcClientConn)

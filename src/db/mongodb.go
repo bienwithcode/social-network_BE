@@ -18,11 +18,11 @@ func InitMongodb(conUrl, collectionName string) *mongo.Database {
 		fmt.Println(err.Error())
 		return nil
 	}
-	defer func() {
-		if err = client.Disconnect(context.TODO()); err != nil {
-			fmt.Println(err.Error())
-		}
-	}()
+	// defer func() {
+	// 	if err = client.Disconnect(context.TODO()); err != nil {
+	// 		fmt.Println(err.Error())
+	// 	}
+	// }()
 
 	return client.Database(collectionName)
 }
