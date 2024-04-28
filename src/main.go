@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"social-network/db"
+	"social-network/middleware"
 	authRoute "social-network/modules/auth/route"
 	userRoute "social-network/modules/user/route"
 	"social-network/utils"
@@ -17,7 +18,7 @@ func main() {
 
 	// router
 	router := gin.Default()
-
+	router.Use(middleware.Recover())
 	v1 := router.Group("/v1")
 	authRoute.Setup(v1)
 	userRoute.Setup(v1, ctx)
