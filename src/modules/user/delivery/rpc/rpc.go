@@ -10,6 +10,7 @@ import (
 
 type Business interface {
 	GetAuth(ctx context.Context, email, password string) (*domain.User, error)
+	GetAuthUser(ctx context.Context, id string) (*domain.User, error)
 }
 
 type grpcService struct {
@@ -28,14 +29,42 @@ func (gs *grpcService) GetAuth(ctx context.Context, req *pb.GetAuthRequest) (*pb
 	}
 	pbUser := &pb.User{
 		Id:            user.Id,
-		Username:      user.Username,
 		Email:         user.Email,
 		Role:          user.Role,
 		EmailVerified: user.EmailVerified,
-		CreatedAt:     timestamppb.New(*user.CreatedAt),
-		UpdatedAt:     timestamppb.New(*user.UpdatedAt),
 	}
 	return &pb.GetAuthResponse{
 		User: pbUser,
+	}, nil
+}
+
+func (gs *grpcService) GetAuthUser(ctx context.Context, req *pb.GetAuthUserRequest) (*pb.GetAuthUserResponse, error) {
+	user, err := gs.business.GetAuthUser(ctx, req.Id)
+	if err != nil {
+		return nil, err
+	}
+
+	return &pb.GetAuthUserResponse{
+		User: &pb.User{
+			Id:            user.Id,
+			Role:          user.Role,
+			EmailVerified: user.EmailVerified,
+			Banned:        user.Banned,
+			FacebookId:    user.FacebookId,
+			GoogleId:      user.GoogleId,
+			GithubId:      user.GithubId,
+			IsOnline:      user.IsOnline,
+			Posts:         user.Posts,
+			Likes:         user.Likes,
+			Comments:      user.Comments,
+			Followers:     user.Followers,
+			Following:     user.Following,
+			Messages:      user.Messages,
+			Notifications: user.Notifications,
+			FullName:      user.FullName,
+			Email:         user.Email,
+			CreatedAt:     timestamppb.New(*user.CreatedAt),
+			UpdatedAt:     timestamppb.New(*user.UpdatedAt),
+		},
 	}, nil
 }

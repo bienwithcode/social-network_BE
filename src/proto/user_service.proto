@@ -1,0 +1,51 @@
+syntax = "proto3";
+
+option go_package = "./pb";
+
+package proto;
+
+import "google/protobuf/timestamp.proto";
+
+message User {
+	string id = 1;
+	string role = 2;
+	bool email_verified = 3;
+	bool banned = 4;
+	string facebook_id = 5;
+	string google_id = 6;
+	string github_id = 7;
+	bool is_online = 8;
+	repeated string posts = 9;
+	repeated string likes = 10;
+	repeated string comments = 11;
+	repeated string followers = 12;
+	repeated string following = 13;
+	repeated string messages = 14;
+	repeated string notifications = 15;
+	string full_name = 16;
+	string email = 17;
+	google.protobuf.Timestamp created_at = 18;
+	google.protobuf.Timestamp updated_at = 19;
+}
+
+service UserService {
+  	rpc GetAuth(GetAuthRequest) returns (GetAuthResponse);
+  	rpc GetAuthUser(GetAuthUserRequest) returns (GetAuthUserResponse);
+}
+
+message GetAuthRequest {
+  	string email = 1;
+  	string password = 2;
+}
+
+message GetAuthResponse {
+  	User user = 1;
+}
+
+message GetAuthUserRequest {
+  	string id = 1;
+}
+
+message GetAuthUserResponse {
+  	User user = 1;
+}

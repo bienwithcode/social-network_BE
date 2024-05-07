@@ -22,10 +22,37 @@ func (gsc *grpcServiceClient) GetAuthorize(ctx context.Context, email, password 
 	return &domain.User{
 		Id:            res.User.Id,
 		Email:         res.User.Email,
-		Username:      res.User.Username,
 		Role:          res.User.Role,
 		EmailVerified: res.User.EmailVerified,
-		// CreatedAt: res.User.CreatedAt,
-		// UpdatedAt: res.User.UpdatedAt,
+	}, nil
+}
+
+func (gsc *grpcServiceClient) GetAuthUser(ctx context.Context, id string) (*domain.User, error) {
+	res, err := gsc.usc.GetAuthUser(ctx, &pb.GetAuthUserRequest{Id: id})
+	if err != nil {
+		return nil, err
+	}
+	createAt := res.User.CreatedAt.AsTime()
+	updatedAt := res.User.UpdatedAt.AsTime()
+	return &domain.User{
+		Id:            res.User.Id,
+		Role:          res.User.Role,
+		EmailVerified: res.User.EmailVerified,
+		Banned:        res.User.Banned,
+		FacebookId:    res.User.FacebookId,
+		GoogleId:      res.User.GoogleId,
+		GithubId:      res.User.GithubId,
+		IsOnline:      res.User.IsOnline,
+		Posts:         res.User.Posts,
+		Likes:         res.User.Likes,
+		Comments:      res.User.Comments,
+		Followers:     res.User.Followers,
+		Following:     res.User.Following,
+		Messages:      res.User.Messages,
+		Notifications: res.User.Notifications,
+		FullName:      res.User.FullName,
+		Email:         res.User.Email,
+		CreatedAt:     &createAt,
+		UpdatedAt:     &updatedAt,
 	}, nil
 }

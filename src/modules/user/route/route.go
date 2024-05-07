@@ -20,6 +20,7 @@ import (
 
 type UserService interface {
 	GetAuth(ctx context.Context, email, password string) (*domain.User, error)
+	GetAuthUser(ctx context.Context, id string) (*domain.User, error)
 }
 
 func initUserGrpcServer(addr string, ctx context.Context) {

@@ -17,6 +17,7 @@ import (
 
 type AuthService interface {
 	LoginHdl() func(*gin.Context)
+	AuthUserHdl() func(*gin.Context)
 }
 
 func initAuthGrpcService(addr string) AuthService {
@@ -37,5 +38,6 @@ func initAuthGrpcService(addr string) AuthService {
 
 func Setup(router *gin.RouterGroup) {
 	authGrpc := initAuthGrpcService(utils.GodotEnv("AUTH_GRPC_ADDR"))
+	router.GET("/auth-user", authGrpc.AuthUserHdl())
 	router.POST("/login", authGrpc.LoginHdl())
 }

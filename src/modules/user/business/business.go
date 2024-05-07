@@ -7,6 +7,7 @@ import (
 
 type UserRepository interface {
 	GetAuth(ctx context.Context, email, password string) (*domain.User, error)
+	GetAuthUser(ctx context.Context, id string) (*domain.User, error)
 }
 
 type business struct {
@@ -22,6 +23,16 @@ func NewBusiness(userRepo UserRepository) *business {
 func (biz *business) GetAuth(ctx context.Context, email, password string) (*domain.User, error) {
 
 	user, err := biz.userRepo.GetAuth(ctx, email, password)
+
+	if err != nil {
+		return nil, err
+	}
+	return user, nil
+}
+
+func (biz *business) GetAuthUser(ctx context.Context, id string) (*domain.User, error) {
+
+	user, err := biz.userRepo.GetAuthUser(ctx, id)
 
 	if err != nil {
 		return nil, err
