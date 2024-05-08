@@ -1,6 +1,7 @@
 package route
 
 import (
+	"social-network/middleware"
 	"social-network/proto/pb"
 
 	authBsn "social-network/modules/auth/business"
@@ -38,6 +39,6 @@ func initAuthGrpcService(addr string) AuthService {
 
 func Setup(router *gin.RouterGroup) {
 	authGrpc := initAuthGrpcService(utils.GodotEnv("AUTH_GRPC_ADDR"))
-	router.GET("/auth-user", authGrpc.AuthUserHdl())
+	router.GET("/auth-user", middleware.AuthRequire(), authGrpc.AuthUserHdl())
 	router.POST("/login", authGrpc.LoginHdl())
 }

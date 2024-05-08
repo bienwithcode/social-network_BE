@@ -43,19 +43,19 @@ func (api *api) LoginHdl() func(*gin.Context) {
 
 func (api *api) AuthUserHdl() func(*gin.Context) {
 	return func(c *gin.Context) {
-		data := model.AuthUserId{
-			Id: "62a75af7d4327f33ccdf8010",
+		if auth, ok := c.Get("authData"); ok {
+			authData, _ := auth.(map[string]interface{})
+			id := authData["id"].(string)
+			data := model.AuthUserId{
+				Id: id,
+			}
+			response, err := api.business.GetAuthUser(c.Request.Context(), &data)
+
+			if err != nil {
+				panic(err.Error())
+			}
+			utils.WriteSuccessResponse(c, "success", http.StatusOK, &response)
 		}
 
-		// if err := c.ShouldBind(&data); err != nil {
-		// 	panic(err.Error())
-		// }
-
-		response, err := api.business.GetAuthUser(c.Request.Context(), &data)
-
-		if err != nil {
-			panic(err.Error())
-		}
-		utils.WriteSuccessResponse(c, "success", http.StatusOK, &response)
 	}
 }
