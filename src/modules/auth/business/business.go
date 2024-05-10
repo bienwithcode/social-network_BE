@@ -45,13 +45,13 @@ func (biz *business) Login(ctx context.Context, data *model.AuthEmailPassword) (
 		return nil, err
 	}
 
+	authUser, err := biz.userRepo.GetAuthUser(ctx, authData.Id)
+	if err != nil {
+		return nil, err
+	}
 	return &model.TokenResponse{
 		Token: tokenStr,
-		User: model.User{
-			Id:    authData.Id,
-			Email: authData.Email,
-			Role:  authData.Role,
-		},
+		User:  authUser,
 	}, nil
 }
 

@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"errors"
 	"net/http"
 	"social-network/utils"
 
@@ -13,15 +14,15 @@ func AuthRequire() gin.HandlerFunc {
 
 		token, err := utils.VerifyTokenHeader(c)
 		if err != nil {
-			utils.WriteErrorResponse(c, http.StatusBadRequest, err)
+			utils.WriteErrorResponse(c, http.StatusBadRequest, errors.New("token cannot verify"))
 		}
 		claims, ok := token.Claims.(jwt.MapClaims)
 		if !ok {
-			utils.WriteErrorResponse(c, http.StatusBadRequest, "err")
+			utils.WriteErrorResponse(c, http.StatusBadRequest, errors.New("err"))
 		}
 		authData, ok := claims["auth"].(map[string]interface{})
 		if !ok {
-			utils.WriteErrorResponse(c, http.StatusBadRequest, "auth data not found")
+			utils.WriteErrorResponse(c, http.StatusBadRequest, errors.New("auth data not found"))
 			return
 		}
 		c.Set("authData", authData)

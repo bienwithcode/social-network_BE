@@ -1,5 +1,7 @@
 package model
 
+import "social-network/domain"
+
 type AuthUserId struct {
 	Id string `json:"id" form:"_id"`
 }
@@ -20,5 +22,5 @@ type TokenResponse struct {
 	// RefreshToken will be used when access token expired
 	// to issue new pair access token and refresh token.
 	// RefreshToken *Token `json:"refresh_token,omitempty"`
-	User User `json:"user"`
+	User *domain.User `json:"user"`
 }
