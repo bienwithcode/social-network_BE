@@ -24,3 +24,9 @@ type TokenResponse struct {
 	// RefreshToken *Token `json:"refresh_token,omitempty"`
 	User *domain.User `json:"user"`
 }
+
+type Filter struct {
+	EmailVerified   *bool   `json:"emailVerified,omitempty" form:"emailVerified"`
+	HideBannedUsers *bool   `json:"hideBannedUsers,omitempty" form:"hideBannedUsers"`
+	SearchQuery     *string `json:"searchQuery,omitempty" form:"searchQuery"`
+}
