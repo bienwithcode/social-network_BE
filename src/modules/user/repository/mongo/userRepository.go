@@ -57,13 +57,7 @@ func (storage *mongodbStorage) GetAuthUser(ctx context.Context, id string) (*dom
 	return &user, nil
 }
 
-func (storage *mongodbStorage) GetUsers(ctx context.Context, paging *utils.Pagination, filter *model.Filter) ([]*domain.User, error) {
-	var authUserId string
-	if auth, ok := ctx.Get("authData"); ok {
-		authData, _ := auth.(map[string]interface{})
-		authUserId = authData["id"].(string)
-	}
-
+func (storage *mongodbStorage) GetUsers(ctx context.Context, authUserId string, paging *utils.Pagination, filter *model.Filter) ([]*domain.User, error) {
 	query := bson.M{"_id": bson.M{"$ne": authUserId}}
 
 	if filter.EmailVerified != nil {
