@@ -4,9 +4,11 @@ import (
 	"context"
 	"net"
 	"social-network/domain"
+	"social-network/middleware"
 	"social-network/proto/pb"
 
 	userBsn "social-network/modules/user/business"
+	userApiHdl "social-network/modules/user/delivery/api"
 	userHdl "social-network/modules/user/delivery/rpc"
 	userRepo "social-network/modules/user/repository/mongo"
 	"social-network/utils"
@@ -23,6 +25,10 @@ type UserService interface {
 	GetAuthUser(ctx context.Context, id string) (*domain.User, error)
 }
 
+type UserApiService interface {
+	GetUserHdl() func(*gin.Context)
+}
+
 func initUserGrpcServer(addr string, ctx context.Context) {
 	// user grpc server
 	listen, err := net.Listen("tcp", addr)
@@ -32,8 +38,8 @@ func initUserGrpcServer(addr string, ctx context.Context) {
 	server := grpc.NewServer()
 
 	// user dependencies
-	UserRepository := userRepo.NewMongoStorage(ctx.Value(utils.CtxMongodb).(*mongo.Database))
-	userBusiness := userBsn.NewBusiness(UserRepository)
+	userRepository := userRepo.NewMongoStorage(ctx.Value(utils.CtxMongodb).(*mongo.Database))
+	userBusiness := userBsn.NewBusiness(userRepository)
 	userRpc := userHdl.NewGrpcService(userBusiness)
 	pb.RegisterUserServiceServer(server, userRpc)
 
@@ -45,6 +51,20 @@ func initUserGrpcServer(addr string, ctx context.Context) {
 	}()
 }
 
+func initUserApiService(ctx context.Context) UserApiService {
+	// auth dependencies
+	userRepository := userRepo.NewMongoStorage(ctx.Value(utils.CtxMongodb).(*mongo.Database))
+	userBusiness := userBsn.NewBusiness(userRepository)
+	authApi := userApiHdl.NewAPI(userBusiness)
+	return authApi
+}
+
 func Setup(router *gin.RouterGroup, ctx context.Context) {
 	initUserGrpcServer(utils.GodotEnv("USER_GRPC_ADDR"), ctx)
+
+	userApi := initUserApiService(ctx)
+	userGroup := router.Group("/users")
+	{
+		userGroup.GET("/get-users", middleware.AuthRequire(), userApi.GetUserHdl())
+	}
 }
