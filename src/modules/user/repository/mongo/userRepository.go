@@ -114,3 +114,32 @@ func (storage *mongodbStorage) GetUsers(ctx context.Context, authUserId string, 
 	return users, nil
 
 }
+
+func (storage *mongodbStorage) GetOnlineUsers(ctx context.Context, authUserId string) ([]*domain.User, error) {
+	objectID, err := primitive.ObjectIDFromHex(authUserId)
+	if err != nil {
+		return nil, err
+	}
+
+	collection := storage.db.Collection(domain.User{}.TableName())
+	filter := bson.M{
+		"isOnline": true,
+		"_id":      bson.M{"$ne": objectID},
+		"banned":   bson.M{"$ne": true},
+	}
+	findOptions := options.Find()
+	findOptions.SetProjection(bson.M{"password": 0})
+
+	cursor, err := collection.Find(ctx, filter, findOptions)
+	if err != nil {
+		return nil, err
+	}
+
+	var users []*domain.User
+
+	if err := cursor.All(ctx, &users); err != nil {
+		return nil, err
+	}
+
+	return users, nil
+}

@@ -12,6 +12,7 @@ import (
 
 type Business interface {
 	GetUsers(ctx context.Context, authUserId string, paging *utils.Pagination, filter *model.Filter) ([]*domain.User, error)
+	GetOnlineUsers(ctx context.Context, authUserId string) ([]*domain.User, error)
 }
 
 type api struct {
@@ -45,6 +46,24 @@ func (api *api) GetUserHdl() func(*gin.Context) {
 		}
 
 		response, err := api.business.GetUsers(c.Request.Context(), authUserId, pagination, &filter)
+
+		if err != nil {
+			panic(err.Error())
+		}
+		utils.WriteSuccessResponse(c, "success", http.StatusOK, &response)
+
+	}
+}
+
+func (api *api) GetOnlineUsersHdl() func(*gin.Context) {
+	return func(c *gin.Context) {
+		var authUserId string
+		if auth, ok := c.Get("authData"); ok {
+			authData, _ := auth.(map[string]interface{})
+			authUserId = authData["id"].(string)
+		}
+
+		response, err := api.business.GetOnlineUsers(c.Request.Context(), authUserId)
 
 		if err != nil {
 			panic(err.Error())
