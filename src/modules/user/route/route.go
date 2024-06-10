@@ -28,6 +28,7 @@ type UserService interface {
 type UserApiService interface {
 	GetUserHdl() func(*gin.Context)
 	GetOnlineUsersHdl() func(*gin.Context)
+	GetNewMembersHdl() func(*gin.Context)
 }
 
 func initUserGrpcServer(addr string, ctx context.Context) {
@@ -68,5 +69,6 @@ func Setup(router *gin.RouterGroup, ctx context.Context) {
 	{
 		userGroup.GET("/get-users", middleware.AuthRequire(), userApi.GetUserHdl())
 		userGroup.GET("/online-users", middleware.AuthRequire(), userApi.GetOnlineUsersHdl())
+		userGroup.GET("/new-members", middleware.AuthRequire(), userApi.GetNewMembersHdl())
 	}
 }

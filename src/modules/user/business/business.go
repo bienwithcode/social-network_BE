@@ -12,6 +12,7 @@ type UserRepository interface {
 	GetAuthUser(ctx context.Context, id string) (*domain.User, error)
 	GetUsers(ctx context.Context, authUserId string, paging *utils.Pagination, filter *model.Filter) ([]*domain.User, error)
 	GetOnlineUsers(ctx context.Context, authUserId string) ([]*domain.User, error)
+	GetNewMembers(ctx context.Context, authUserId string, paging *utils.Pagination) ([]*domain.User, error)
 }
 
 type business struct {
@@ -57,6 +58,16 @@ func (biz *business) GetUsers(ctx context.Context, authUserId string, paging *ut
 func (biz *business) GetOnlineUsers(ctx context.Context, authUserId string) ([]*domain.User, error) {
 
 	user, err := biz.userRepo.GetOnlineUsers(ctx, authUserId)
+
+	if err != nil {
+		return nil, err
+	}
+	return user, nil
+}
+
+func (biz *business) GetNewMembers(ctx context.Context, authUserId string, paging *utils.Pagination) ([]*domain.User, error) {
+
+	user, err := biz.userRepo.GetNewMembers(ctx, authUserId, paging)
 
 	if err != nil {
 		return nil, err

@@ -143,3 +143,33 @@ func (storage *mongodbStorage) GetOnlineUsers(ctx context.Context, authUserId st
 
 	return users, nil
 }
+
+func (storage *mongodbStorage) GetNewMembers(ctx context.Context, authUserId string, paging *utils.Pagination) ([]*domain.User, error) {
+	objectID, err := primitive.ObjectIDFromHex(authUserId)
+	if err != nil {
+		return nil, err
+	}
+
+	collection := storage.db.Collection(domain.User{}.TableName())
+	filter := bson.M{
+		"_id":    bson.M{"$ne": objectID},
+		"banned": bson.M{"$ne": true},
+	}
+	findOptions := options.Find()
+	findOptions.SetProjection(bson.M{"password": 0})
+	findOptions.SetLimit(int64(paging.PerPage))
+	findOptions.SetSort(bson.M{"createdAt": -1})
+
+	cursor, err := collection.Find(ctx, filter, findOptions)
+	if err != nil {
+		return nil, err
+	}
+
+	var users []*domain.User
+
+	if err := cursor.All(ctx, &users); err != nil {
+		return nil, err
+	}
+
+	return users, nil
+}
