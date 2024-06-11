@@ -14,6 +14,7 @@ type Business interface {
 	GetUsers(ctx context.Context, authUserId string, paging *utils.Pagination, filter *model.Filter) ([]*domain.User, error)
 	GetOnlineUsers(ctx context.Context, authUserId string) ([]*domain.User, error)
 	GetNewMembers(ctx context.Context, authUserId string, paging *utils.Pagination) ([]*domain.User, error)
+	GetAuthUser(ctx context.Context, id string) (*domain.User, error)
 }
 
 type api struct {
@@ -90,6 +91,19 @@ func (api *api) GetNewMembersHdl() func(*gin.Context) {
 		}
 
 		response, err := api.business.GetNewMembers(c.Request.Context(), authUserId, pagination)
+
+		if err != nil {
+			panic(err.Error())
+		}
+		utils.WriteSuccessResponse(c, "success", http.StatusOK, &response)
+
+	}
+}
+
+func (api *api) GetUserByIdHdl() func(*gin.Context) {
+	return func(c *gin.Context) {
+		userId := c.Param("id")
+		response, err := api.business.GetAuthUser(c.Request.Context(), userId)
 
 		if err != nil {
 			panic(err.Error())
