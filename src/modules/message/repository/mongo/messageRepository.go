@@ -104,10 +104,10 @@ func (storage *mongodbStorage) GetConversations(ctx context.Context, authUserId 
 		return nil, err
 	}
 
-	var users []*domain.User
+	var message []*domain.Message
 
-	if err := cursor.All(ctx, &users); err != nil {
+	if err := cursor.All(ctx, &message); err != nil {
 		return nil, err
 	}
-	return nil, nil
+	return message, nil
 }
