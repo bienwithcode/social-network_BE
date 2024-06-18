@@ -11,6 +11,7 @@ import (
 
 type Business interface {
 	GetConversations(ctx context.Context, authUserId string) ([]*domain.Message, error)
+	GetMessages(ctx context.Context, authUserId, userId string) ([]*domain.Message, error)
 }
 
 type api struct {
@@ -49,8 +50,18 @@ func (api *api) GetMessagesHdl() func(*gin.Context) {
 
 func (api *api) CreateMessagesHdl() func(*gin.Context) {
 	return func(c *gin.Context) {
-		// TODO
+		var authUserId string
+		if auth, ok := c.Get("authData"); ok {
+			authData, _ := auth.(map[string]interface{})
+			authUserId = authData["id"].(string)
+		}
+		userId := c.Query("id")
+		response, err := api.business.GetMessages(c.Request.Context(), authUserId, userId)
 
+		if err != nil {
+			panic(err.Error())
+		}
+		utils.WriteSuccessResponse(c, "success", http.StatusOK, &response)
 	}
 }
 

@@ -99,7 +99,7 @@ func (storage *mongodbStorage) GetConversations(ctx context.Context, authUserId 
 		bson.D{{Key: "$sort", Value: bson.D{{Key: "createdAt", Value: -1}}}},
 	}
 
-	cursor, err := collection.Find(ctx, filter)
+	cursor, err := collection.Aggregate(ctx, filter)
 	if err != nil {
 		return nil, err
 	}
@@ -110,4 +110,14 @@ func (storage *mongodbStorage) GetConversations(ctx context.Context, authUserId 
 		return nil, err
 	}
 	return messages, nil
+}
+
+func (storage *mongodbStorage) GetMessages(ctx context.Context, authUserId, userId string) ([]*domain.Message, error) {
+	// filter := bson.M{
+	// 	"$or": []bson.M{
+	// 		{"sender": authUserId, "receiver": userId},
+	// 		{"sender": userId, "receiver": authUserId},
+	// 	},
+	// }
+	return nil, nil
 }
